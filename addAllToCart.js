@@ -2,8 +2,8 @@ const { firefox } = require("playwright");
 
 const init = async () => {
     global.browser = await firefox.launch({
-        headless: true, // show or dont show browser
-        //slowMo: 500,
+        headless: false, // show or dont show browser
+        slowMo: 500,
     });
     
     //create a new context
@@ -20,28 +20,28 @@ const shutdown = async () => {
 };
 
 const myTest = async () => {
-    //await page.pause();
+    await page.pause();
     await page.goto('https://www.saucedemo.com');
     await page.fill(selectors.userName, "standard_user");
     await page.fill(selectors.password, "secret_sauce");
     const btnLogin = await page.locator(selectors.btnLogin);
     await btnLogin.click();
 
-    const allPricetags = await page.locator(selectors.priceTags)
-    .allInnerTexts();
-    
-    sum = 0;
-    for (const tag of allPricetags) {
-        sum += parseFloat(tag.toString().replace('$',''));
+    const allTheButtons = page.locator(selectors.addToCartButtons);
+    const count = await allTheButtons.count();
+    for(let i = 0; i < count; i++) {
+        await allTheButtons.nth(i).click();
     }
-    console.log("Want one of everything? That'll cost you "+sum);
+
+    await page.goto('https://www.saucedemo.com/cart.html');
 };
 
 const selectors = {
     userName: '#user-name',
     password: '#password',
     btnLogin: '#login-button',
-    priceTags: 'div.inventory_item_price',
+    addToCartButtons: 'div.inventory_item_description button',
+    xpAddToCartButtons: 'xpath=//',
 }
 
 const runTest = async () => {
