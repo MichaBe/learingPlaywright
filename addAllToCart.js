@@ -2,7 +2,7 @@ const { firefox } = require("playwright");
 
 const init = async () => {
     global.browser = await firefox.launch({
-        headless: false, // show or dont show browser
+        headless: false, // show or dont show browser (false = visible, true = hidden)
         slowMo: 500,
     });
     
@@ -20,7 +20,7 @@ const shutdown = async () => {
 };
 
 const myTest = async () => {
-    await page.pause();
+    //await page.pause();
     await page.goto('https://www.saucedemo.com');
     await page.fill(selectors.userName, "standard_user");
     await page.fill(selectors.password, "secret_sauce");
@@ -29,7 +29,7 @@ const myTest = async () => {
 
     const allTheButtons = page.locator(selectors.addToCartButtons);
     const count = await allTheButtons.count();
-    for(let i = 0; i < count; i++) {
+    for (const i of Array(count).keys()) {
         await allTheButtons.nth(i).click();
     }
 
@@ -41,7 +41,6 @@ const selectors = {
     password: '#password',
     btnLogin: '#login-button',
     addToCartButtons: 'div.inventory_item_description button',
-    xpAddToCartButtons: 'xpath=//',
 }
 
 const runTest = async () => {
